@@ -7,9 +7,10 @@ class Contact{
 	static int storageSpace = 25;
 	 //keeps track of the remaining space in the array
 	static int openContact = 0;
-	//tracks the next open spot in the array
+	//tracks the next open spot in the array and where the array ends for sorting and searching
 	
 	void setContact(String fName, String lName, String pNum, String loc) {
+		//sets the contact initially, increments and decrements the built in counters
 		firstName = fName;
 		lastName = lName;
 		phoneNumber = pNum;
@@ -19,29 +20,45 @@ class Contact{
 		openContact += 1;
 		System.out.println("There is space for " + storageSpace + " additional contacts");
 	}
+	void moveContact(String fName, String lName, String pNum, String loc) {
+		//resets contacts any time they need to be moved in the array for sorting
+		firstName = fName;
+		lastName = lName;
+		phoneNumber = pNum;
+		address = loc;
+	}
 	public static int getOpenContact() {
+		//finds the lowest open index in the array
 		return openContact;
 	}
 	int getStorageSpace() {
+		//finds the amount of spaces remaining in the array
 		return storageSpace;
 	}
 	void deleteContact() {
+		//doesn't actually delete the contact, this method needs to be improved
 		int delChoice;
 		Scanner scanDel = new Scanner(System.in);
 		System.out.println("Are you sure you want to delete this contact? Enter 1 for yes.");
 		delChoice = scanDel.nextInt();
 		if(delChoice==1) {
-			this.setContact("", "", "", "");
+			this.moveContact("", "", "", "");
 		}
-		scanDel.close();
+		
 	}
 	
 	void updateContact() {
+		/*
+		 * Goes through the four elements of the contact prompting the user on
+		 * if they would like to change each one, if not the existing value is
+		 * set equal to the new value variable
+		 */
 		this.printContact();
 		int updateChoice;
 		String newFirst, newLast, newPhone, newAddress;
 		Scanner scanUpdate = new Scanner(System.in);
 		scanUpdate.useDelimiter("\n");
+		//scanner uses the enter key as the delimiter
 		System.out.println("Enter 1 to update the first name, enter 0 to skip");
 		updateChoice = scanUpdate.nextInt();
 		if(updateChoice == 1) {
@@ -78,18 +95,20 @@ class Contact{
 		else {
 			newAddress = this.address;
 		}
-		this.setContact(newFirst, newLast, newPhone, newAddress);
+		this.moveContact(newFirst, newLast, newPhone, newAddress);
 		this.printContact();
-		scanUpdate.close();
+		
 	}
 	
 	void printContact() {
+		//prints the contact
 		System.out.println(this.firstName + " " + this.lastName);
 		System.out.println(this.phoneNumber);
 		System.out.println(this.address);
 		System.out.println();
 	}
 	public static void printBook(Contact[] book) {
+		//static method for printing all the contacts in the array
 		System.out.println("Your Contacts: ");
 		for(int i=0; i < book.length; i++) {
 			if(book[i].display) {
