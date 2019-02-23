@@ -5,9 +5,9 @@ class Contact{
 	boolean display = false;
 	//Becomes true when a contact is set so empty contacts will not print.
 	static int storageSpace = 25;
-	 //keeps track of the remaining space in the array
+	 //counter to keep track of the remaining space in the array
 	static int openContact = 0;
-	//tracks the next open spot in the array and where the array ends for sorting and searching
+	//counter to track the next open spot in the array and where the array ends for sorting and searching
 	
 	void setContact(String fName, String lName, String pNum, String loc) {
 		//sets the contact initially, increments and decrements the built in counters
@@ -36,13 +36,21 @@ class Contact{
 		return storageSpace;
 	}
 	void deleteContact() {
-		//doesn't actually delete the contact, this method needs to be improved
 		int delChoice;
 		Scanner scanDel = new Scanner(System.in);
 		System.out.println("Are you sure you want to delete this contact? Enter 1 for yes.");
 		delChoice = scanDel.nextInt();
 		if(delChoice==1) {
-			this.moveContact("", "", "", "");
+			/*
+			 * When the contact is deleted, it's value is set such that it will go 
+			 * to the end of either sort, not be displayed or searched through,
+			 * and because openContact is decremented, it will be overwritten the 
+			 * next time the user goes to create a contact. 
+			 */
+			this.moveContact("Zzz", "Zzz", "", "");
+			this.display = false;
+			storageSpace +=1;
+			openContact -=1;
 		}
 		
 	}
@@ -108,7 +116,10 @@ class Contact{
 		System.out.println();
 	}
 	public static void printBook(Contact[] book) {
-		//static method for printing all the contacts in the array
+		/*
+		 * static method for looping through the array and printing only the contacts
+		 * which have display set to true
+		 */
 		System.out.println("Your Contacts: ");
 		for(int i=0; i < book.length; i++) {
 			if(book[i].display) {

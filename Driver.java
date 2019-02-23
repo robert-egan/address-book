@@ -7,8 +7,11 @@ class Driver{
 	static Scanner input = new Scanner(System.in);
 	
 	public static void sortByFirst(Contact[] book) {
-		//Bubble sort to arrange the array by first name
-		//Uses opencontact so it won't search through the empty slots in the array
+		/*Bubble sort to arrange the array by first name.
+		*Uses openContact so it won't search through the empty slots in the array.
+		*Calls move contact to rearrange the position of the contacts 
+		*and uses the temp Contact to store information while rearranging
+		*/
 		Contact temp = new Contact();
 		for(int i=0; i<Contact.openContact;i++) {
 			for(int j=0;j<Contact.openContact-1;j++) {
@@ -24,8 +27,7 @@ class Driver{
 		}
 	}
 	public static void sortByLast(Contact[] book) {
-		//Bubble sort to arrange the array by last name
-		//Uses opencontact so it won't search through the empty slots in the array
+		//Same as sortByFirst except by last name
 		Contact temp = new Contact();
 		for(int i=0; i<Contact.openContact;i++) {
 			for(int j=0;j<Contact.openContact-1;j++) {
@@ -42,7 +44,12 @@ class Driver{
 	}
 	
 	public static int searchByFirst(Contact[] book, String searchName) {
-		//compares the user's inputed value to the stored values in the array 
+		/*
+		 * Compares the user's inputed value to the stored values for firstName in 
+		 * the array in a loop, if it is not found, the index remains at -1, and 
+		 * the functions which call searchByFirst and searchByLast have checks 
+		 * after the call which break if index is still -1
+		 */
 		int index = -1;
 		for(int i=0;i<Contact.openContact;i++) {
 			if(searchName.equals(book[i].firstName)) {
@@ -53,7 +60,7 @@ class Driver{
 		return index;
 	}
 	public static int searchByLast(Contact[] book, String searchName) {
-		//compares the user's inputed value to the stored values in the array 
+		//Similar to searchByFirst but on the lastName value 
 		int index = -1;
 		for(int i=0;i<Contact.openContact;i++) {
 			if(searchName.equals(book[i].lastName)) {
@@ -64,7 +71,7 @@ class Driver{
 		return index;
 	}
 	public static void searchByPhone(Contact[] book, String searchValue) {
-		//compares the user's inputed value to the stored values in the array 
+		//Similar to searchByFirst but on the phoneNumber value 
 		for(int i=0;i<Contact.openContact;i++) {
 			if(searchValue.equals(book[i].phoneNumber)) {
 				book[i].printContact();
@@ -72,7 +79,12 @@ class Driver{
 		}
 	}
 	public static void getMenuChoice() {
-		//Menu of functions for the user
+		/*
+		 * Menu of functions for the user to be ran in the loop in the main method,
+		 * stores the int picked up by the Scanner object in the menuChoice variable
+		 * which will then be used in the switch-case statement of the 
+		 * performTask function.
+		 */
 		System.out.println("Please select what you would like to do from the menu.");
 		System.out.println("Press 1 to add a new contact.");
 		System.out.println("Press 2 to update an existing contact");
@@ -117,6 +129,10 @@ class Driver{
 				System.out.println("Enter the first name of the contact to be updated: ");
 				searchValue = input.next();
 				index = searchByFirst(book, searchValue);
+				if(index==-1) {
+					System.out.println("Contact not found");
+					break;
+				}
 				System.out.println("Enter 1 if that is the contact you would like to update, enter 0 to search by last name");
 				confirm = input.nextInt();
 				if(confirm == 1) {
@@ -126,6 +142,10 @@ class Driver{
 					System.out.println("Enter the last name of the contact to be updated: ");
 					searchValue = input.next();
 					index = searchByLast(book,searchValue);
+					if(index==-1) {
+						System.out.println("Contact not found");
+						break;
+					}
 					book[index].updateContact();
 				}
 				break;
@@ -133,6 +153,10 @@ class Driver{
 				System.out.println("Enter the first name of the contact to be deleted: ");
 				searchValue = input.next();
 				index = searchByFirst(book, searchValue);
+				if(index==-1) {
+					System.out.println("Contact not found");
+					break;
+				}
 				System.out.println("Enter 1 if that is the contact you would like to delete, enter 0 to search by last name");
 				confirm = input.nextInt();
 				if(confirm == 1) {
@@ -142,6 +166,10 @@ class Driver{
 					System.out.println("Enter the last name of the contact to be deleted: ");
 					searchValue = input.next();
 					index = searchByLast(book,searchValue);
+					if(index==-1) {
+						System.out.println("Contact not found");
+						break;
+					}
 					book[index].deleteContact();
 				}
 				break;
