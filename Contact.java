@@ -18,7 +18,7 @@ class Contact{
 		display = true;
 		storageSpace -= 1;
 		openContact += 1;
-		System.out.println("There is space for " + storageSpace + " additional contacts");
+		//System.out.println("There is space for " + storageSpace + " additional contacts");
 	}
 	void moveContact(String fName, String lName, String pNum, String loc) {
 		//resets contacts any time they need to be moved in the array for sorting

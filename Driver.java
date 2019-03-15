@@ -1,10 +1,26 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 class Driver{
+	/*
+	 * 3/14/19
+	 * The changes made to this file for assignment 6 were: 
+	 * Two new methods, writeContactsToFile and recoverContactsFromFile.
+	 * Wrapping the main method in a try-catch block.
+	 * Calling recoverContactsFromFile in the main method
+	 * Calling writeContactsToFile in case 0 of performTask.
+	 */
 	
 	static int menuChoice;
 	static boolean run = true;
 	static Scanner input = new Scanner(System.in);
+	static File file = new File("save.txt");
+	
 	
 	public static void sortByFirst(Contact[] book) {
 		/*Bubble sort to arrange the array by first name.
@@ -78,6 +94,50 @@ class Driver{
 			}
 		}
 	}
+	public static void writeContactsToFile(Contact[] book) {
+		/*
+		 * Iterates through the address book using the built in openContact counter,
+		 * writes each element of the contact to the save file delimited by , which
+		 * will later be used by the recover method.
+		 */
+		try {
+			FileWriter fw = new FileWriter(file);
+			PrintWriter pw = new PrintWriter(fw);
+			sortByFirst(book);
+			for (int i=0; i<Contact.openContact;i++) {
+				pw.write(book[i].firstName + "," + book[i].lastName + "," + 
+					book[i].phoneNumber + "," + book[i].address + "\n");
+				
+			}
+			pw.close();
+		} catch (IOException ioe) {
+			System.out.println(ioe);
+		}
+		
+		
+	}
+	public static void recoverContactsFromFile(Contact[] book) throws IOException {
+		/*
+		 * Reads from the save file. For each line the split method is called to
+		 * store the 4 parts of the contact in the elements array which is then
+		 * used in the call for setContact
+		 */
+		try {
+			FileReader fr = new FileReader(file);
+			BufferedReader br = new BufferedReader(fr);
+			String line = "";
+			int c = 0;
+			//c is the counter for the index in the addressbook array
+			while ((line=br.readLine()) != null) {
+				String[] elements = line.split(",");
+				book[c].setContact(elements[0], elements[1], elements[2], elements[3]);
+				c++;
+			}
+		br.close();
+		} catch (IOException ioe) {
+			System.out.println(ioe);
+		}
+	}
 	public static void getMenuChoice() {
 		/*
 		 * Menu of functions for the user to be ran in the loop in the main method,
@@ -94,7 +154,7 @@ class Driver{
 		System.out.println("Press 6 to search by first name");
 		System.out.println("Press 7 to search by last name");
 		System.out.println("Press 8 to search by phone number");
-		System.out.println("Press 0 to exit");
+		System.out.println("Press 0 to save and exit");
 		Scanner scanMenu = new Scanner(System.in);
 		menuChoice = scanMenu.nextInt();
 		scanMenu.hasNextLine();
@@ -197,8 +257,10 @@ class Driver{
 				searchByPhone(book,searchValue);
 				break;
 			case 0: //shutdown
+				//Saves the contacts once the user opts to exit the program
 				System.out.println("Exiting myContacts, goodbye.");
 				input.close();
+				writeContactsToFile(book);
 				run = false;
 		}
 	}
@@ -207,14 +269,29 @@ class Driver{
 	
 	
 	public static void main(String [] args) {
+		/*
+		 * The Contact array initialization has to be outside of the try
+		 * in order for it to be possible to call the writeContactsToFile method
+		 * in the catch.
+		 */
 		Contact[] myContacts = new Contact[25];
 		for(int i = 0; i < 25; i++) {
 			myContacts[i] = new Contact();
 		}
-		System.out.println("Hello and welcome to myContacts!");
-		while(run == true) {
-			getMenuChoice();
-			performTask(myContacts);
+		//Added a try-catch block to handle any errors that occur
+		try {
+			file.createNewFile();
+			recoverContactsFromFile(myContacts);
+			System.out.println("Hello and welcome to myContacts!");
+			while(run == true) {
+				getMenuChoice();
+				performTask(myContacts);
+			}
+		}catch(Exception e) {
+			//If an error occurs, it will attempt to save the contacts before shutting down.
+			writeContactsToFile(myContacts);
+			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 }
